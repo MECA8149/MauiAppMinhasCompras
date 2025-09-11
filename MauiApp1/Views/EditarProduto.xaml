@@ -5,18 +5,30 @@
              Title="{Binding Descricao}">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Salvar" Clicked= "ToolbarItem_Clicked"/>
+        <ToolbarItem Text="Salvar" Clicked="ToolbarItem_Clicked"/>
     </ContentPage.ToolbarItems>
-
 
     <VerticalStackLayout Spacing="10" Padding="25">
         <Label Text="Descrição do Produto:" />
         <Entry x:Name="txt_descricao" Text="{Binding Descricao}"/>
 
+        <!-- NOVO: Campo de Categoria -->
+        <Label Text="Categoria:" />
+        <Picker x:Name="picker_categoria" Title="Selecione a categoria">
+            <Picker.Items>
+                <x:String>Alimentos</x:String>
+                <x:String>Higiene</x:String>
+                <x:String>Limpeza</x:String>
+                <x:String>Bebidas</x:String>
+                <x:String>Padaria</x:String>
+                <x:String>Outros</x:String>
+            </Picker.Items>
+        </Picker>
+
         <Label Text="Quantidade:" />
-        <Entry x:Name="txt_quantidade" Text= "{Binding Quantidade}"  Keyboard="Numeric" />
+        <Entry x:Name="txt_quantidade" Text="{Binding Quantidade}" Keyboard="Numeric" />
 
         <Label Text="Preço Unitario:"/>
-        <Entry x:Name="txt_preco" Keyboard="Numeric" />
+        <Entry x:Name="txt_preco" Text="{Binding Preco}" Keyboard="Numeric" />
     </VerticalStackLayout>
 </ContentPage>
