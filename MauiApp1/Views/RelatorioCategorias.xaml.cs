@@ -1,31 +1,16 @@
-
 using MauiAppMinhasCompras.Models;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 
 namespace MauiApp1.Views
 {
-    public partial class RelatorioCategorias : ContentPage, INotifyPropertyChanged
+    public partial class RelatorioCategorias : ContentPage
     {
-        private bool _isRefreshing;
-        public bool IsRefreshing
-        {
-            get => _isRefreshing;
-            set
-            {
-                _isRefreshing = value;
-                OnPropertyChanged(nameof(IsRefreshing));
-            }
-        }
-
         public ObservableCollection<KeyValuePair<string, double>> Categorias { get; } = new();
 
         public RelatorioCategorias()
         {
             InitializeComponent();
-            BindingContext = this;
-
-            // REMOVA ESTA LINHA: categoriasCollection.ItemsSource = Categorias;
+            categoriasCollection.ItemsSource = Categorias; // Vinculação direta
         }
 
         protected override async void OnAppearing()
@@ -38,39 +23,32 @@ namespace MauiApp1.Views
         {
             try
             {
-                IsRefreshing = true;
                 Categorias.Clear();
-
                 var totaisPorCategoria = await App.Db.GetTotalByCategory();
 
-                // Ordenar por total (decrescente)
-                var categoriasOrdenadas = totaisPorCategoria
-                    .OrderByDescending(x => x.Value)
-                    .ThenBy(x => x.Key); // CORREÇÃO: Key (maiúsculo)
-
-                foreach (var categoria in categoriasOrdenadas)
+                if (totaisPorCategoria == null || totaisPorCategoria.Count == 0)
                 {
-                    Categorias.Add(categoria); // CORREÇÃO: Add normal
+                    await DisplayAlert("Info", "Nenhum dado encontrado.", "OK");
+                    return;
                 }
 
-                // Adicionar total geral
+                foreach (var categoria in totaisPorCategoria.OrderByDescending(x => x.Value))
+                {
+                    Categorias.Add(categoria);
+                }
+
                 double totalGeral = totaisPorCategoria.Sum(x => x.Value);
                 Categorias.Add(new KeyValuePair<string, double>("TOTAL GERAL", totalGeral));
             }
             catch (Exception ex)
             {
-                await DisplayAlert("Erro", $"Falha ao carregar relatório: {ex.Message}", "OK");
-            }
-            finally
-            {
-                IsRefreshing = false;
+                await DisplayAlert("Erro", ex.Message, "OK");
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged(string propertyName)
+        private async void ToolbarItem_Fechar_Clicked(object sender, EventArgs e)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            await Navigation.PopAsync();
         }
     }
 }

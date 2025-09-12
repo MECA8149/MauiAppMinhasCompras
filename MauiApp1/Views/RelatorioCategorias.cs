@@ -26,7 +26,6 @@ namespace MauiApp1.Views
             BindingContext = this;
 
             LoadRelatorioCommand = new Command(async () => await LoadRelatorio());
-            categoriasCollection.ItemsSource = Categorias;
         }
 
         protected override async void OnAppearing()
@@ -43,6 +42,12 @@ namespace MauiApp1.Views
                 Categorias.Clear();
 
                 var totaisPorCategoria = await App.Db.GetTotalByCategory();
+
+                if (totaisPorCategoria == null || totaisPorCategoria.Count == 0)
+                {
+                    await DisplayAlert("Info", "Nenhum dado encontrado para exibir o relatório.", "OK");
+                    return;
+                }
 
                 // Ordenar por total (decrescente)
                 var categoriasOrdenadas = totaisPorCategoria
@@ -66,6 +71,18 @@ namespace MauiApp1.Views
             {
                 IsRefreshing = false;
             }
+        }
+
+        // MÉTODO QUE ESTAVA FALTANDO - adicione esta parte
+        private async void ToolbarItem_Fechar_Clicked(object sender, EventArgs e)
+        {
+            await Navigation.PopAsync();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

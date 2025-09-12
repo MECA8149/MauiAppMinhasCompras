@@ -21,7 +21,7 @@
                    Padding="5"
                    BackgroundColor="White">
                 <Picker x:Name="categoriaFilterPicker"
-                        Title="📂 Filtrar por Categoria"
+                        Title="Filtrar por Categoria"
                         SelectedIndexChanged="CategoriaFilterPicker_SelectedIndexChanged"
                         BackgroundColor="Transparent"
                         FontSize="16"/>
